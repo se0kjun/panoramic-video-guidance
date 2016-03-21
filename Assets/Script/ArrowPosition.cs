@@ -37,9 +37,6 @@ public class ArrowPosition : MonoBehaviour {
         Vector3 v2 = Vector3.Project(v1, Camera.main.transform.forward);
         Vector3 v3 = Camera.main.transform.position + (v1 - v2);
 
-        float angle = Vector3.Angle(Camera.main.transform.right, v3);
-        transform.localEulerAngles = new Vector3(90.0f, 360 - angle, 0.0f);
-
         Vector3 projectPoint = arrowPlane.transform.InverseTransformPoint(v3);
         projectPoint.y = 0;
         Vector3 raycastingPoint = arrowPlane.transform.TransformPoint(projectPoint);
@@ -48,6 +45,8 @@ public class ArrowPosition : MonoBehaviour {
         RaycastHit hit;
         if(Physics.Raycast(ray, out hit))
         {
+            float angle = Vector3.Angle(Camera.main.transform.right, v3);
+
             if (hit.transform.tag == "PlaneEdge")
             {
                 transform.position = hit.point;
@@ -58,6 +57,19 @@ public class ArrowPosition : MonoBehaviour {
                 Physics.Raycast(ray, out hit);
                 transform.position = hit.point;
             }
+
+            Debug.Log(transform.localPosition.z);
+            if (Mathf.Clamp(transform.localPosition.z, -2.55f, 0) == -2.55f)
+            {
+                transform.localEulerAngles = new Vector3(90.0f, angle, 0.0f);
+                Debug.Log("test");
+            }
+            else
+            {
+                transform.localEulerAngles = new Vector3(90.0f, 360 - angle, 0.0f);
+                Debug.Log("tejiowjwie");
+            }
+                
         }
     }
 }
