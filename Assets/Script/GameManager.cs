@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
 
     public string XMLFileName;
     public Camera myCam;
+    public bool arrowVisible;
 
 	[HideInInspector]
 	public VideoXMLParser parser = VideoXMLParser.Instance;
