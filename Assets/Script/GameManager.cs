@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour {
 
     public string XMLFileName;
     public Camera myCam;
-    public bool arrowVisible;
 
 	[HideInInspector]
 	public VideoXMLParser parser = VideoXMLParser.Instance;
@@ -23,6 +22,28 @@ public class GameManager : MonoBehaviour {
         get; set;
     }
     private List<MarkerXMLWrapper> spawningObject;
+
+    [Header("Preview Camera Option")]
+    [Space(10)]
+    public bool previewCameraAvailable;
+    [Range(0, 1)]
+    public float previewCameraAlpha;
+    public bool previewCameraDelay;
+    [Range(1, 30)]
+    public float previewCameraDelayTime;
+
+
+    [Header("Arrow Option")]
+    [Space(10)]
+    public bool arrowAvailable;
+    public bool arrowVisible;
+    [Range(0, 1)]
+    public float arrowAlpha;
+
+    [Space(10)]
+    [Header("Move Camera Option")]
+    public bool moveCameraAvailable;
+    public bool cameraEase;
 
     void Awake()
     {
