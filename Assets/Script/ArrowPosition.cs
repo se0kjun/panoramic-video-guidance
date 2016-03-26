@@ -7,15 +7,19 @@ public class ArrowPosition : MonoBehaviour {
     private GameManager managerObject;
     private bool hideFlag;
 
+    //arrow settings
+    private bool arrowAvailable;
+
     void Start ()
     {
         hideFlag = false;
         arrowPlane = GameObject.Find("ArrowPlane");
         managerObject = GameObject.Find("GameManager").GetComponent<GameManager>();
+        arrowAvailable = managerObject.arrowAvailable;
     }
 
 	void Update () {
-        if (trackingObject != null)
+        if (trackingObject != null && arrowAvailable)
         {
             if (!managerObject.arrowVisible && hideFlag)
             {

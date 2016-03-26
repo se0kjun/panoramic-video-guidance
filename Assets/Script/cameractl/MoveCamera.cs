@@ -12,8 +12,14 @@ public class MoveCamera : MonoBehaviour {
     private bool movingFlag;
     private bool quaternionFlag;
 
+    //moving camera settings
+    private bool movingCameraAvailable;
+    private bool movingCameraEase;
+
 	void Start () {
         managerObject = GameObject.Find("GameManager").GetComponent<GameManager>();
+        movingCameraAvailable = managerObject.moveCameraAvailable;
+        movingCameraEase = managerObject.cameraEase;
         mainCameraFrame = GameObject.Find("TrackingSpace");
         outsideObject = managerObject.outsideCameraObject;
         movingSpeed = 1.0f;
@@ -22,16 +28,14 @@ public class MoveCamera : MonoBehaviour {
     }
 	
 	void Update () {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && movingCameraAvailable)
         {
-            //Quaternion q1;
-            //Quaternion q2;
-            //Quaternion q10;
-
-            //q1 = transform.rotation;
-            //q2 = target.transform.rotation;
-            //q10 = q1 * Quaternion.Inverse(q2);
-            //localQuaternion = Camera.main.transform.rotation;
+            if (!movingCameraEase && outsideObject.Count != 0)
+            {
+                List<GameObject> top = new List<GameObject>(outsideObject.Values);
+                mainCameraFrame.transform.LookAt(top[0].transform.position);
+                return;
+            }
 
             movingFlag = true;
         }
@@ -39,14 +43,10 @@ public class MoveCamera : MonoBehaviour {
 
     void LateUpdate()
     {
-        //Debug.Log(Camera.main.transform.position);
-        //Debug.Log(mainCameraFrame.transform.position);
-
         if (outsideObject.Count != 0)
         {
             if (movingFlag)
             {
-
                 Transform faceObj = null;
                 foreach (string key in outsideObject.Keys)
                 {
