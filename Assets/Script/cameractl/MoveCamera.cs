@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class MoveCamera : MonoBehaviour {
     private Dictionary<string, GameObject> outsideObject;
     private GameManager managerObject;
+
     private GameObject mainCameraFrame;
     private Quaternion localQuaternion;
     private float movingSpeed;
