@@ -25,6 +25,7 @@ public class ShowPreview : MonoBehaviour
     private Camera mainCam;
 
     private Dictionary<string, PreviewTexture> previewObject;
+    private bool previewHideFlag;
 
     //settings of preview object
     private bool previewAvailable;
@@ -40,6 +41,7 @@ public class ShowPreview : MonoBehaviour
         previewDelay = managerObject.previewCameraDelay;
         previewDelayTime = managerObject.previewCameraDelayTime;
         outsideObject = managerObject.outsideCameraObject;
+        previewHideFlag = false;
         previewObject = new Dictionary<string, PreviewTexture>();
         mainCam = Camera.main;
     }
@@ -96,9 +98,14 @@ public class ShowPreview : MonoBehaviour
                     Vector3 v3Pos = Camera.main.WorldToViewportPoint(outsideObject[key].transform.position);
                     if (v3Pos.x >= 0.0f && v3Pos.x <= 1.0f && v3Pos.y >= 0.0f && v3Pos.y <= 1.0f && v3Pos.z > 0)
                     {
+                        previewHideFlag = false;
                         previewObject[key].previewObject.transform.GetComponent<Renderer>().enabled = false;
                     }
-                    else
+                    else if (!previewHideFlag && previewDelay)
+                    {
+                        StartCoroutine("DelayPreview", previewObject[key].previewObject);
+                    }
+                    else if (!previewDelay)
                     {
                         previewObject[key].previewObject.transform.GetComponent<Renderer>().enabled = true;
                     }
@@ -150,7 +157,9 @@ public class ShowPreview : MonoBehaviour
 
     System.Collections.IEnumerator DelayPreview(GameObject previewObj)
     {
+        previewObj.GetComponent<Renderer>().enabled = true;
         yield return new WaitForSeconds(previewDelayTime);
         previewObj.GetComponent<Renderer>().enabled = false;
+        previewHideFlag = true;
     }
 }
