@@ -7,7 +7,9 @@ public class MoveCamera : MonoBehaviour {
     private GameManager managerObject;
 
     private GameObject mainCameraFrame;
+    private GameObject CameraReplica;
     private Quaternion localQuaternion;
+    private Coroutine spinCoroutine;
     private float movingSpeed;
     private bool movingFlag;
     private bool quaternionFlag;
@@ -21,6 +23,7 @@ public class MoveCamera : MonoBehaviour {
         movingCameraAvailable = managerObject.moveCameraAvailable;
         movingCameraEase = managerObject.cameraEase;
         mainCameraFrame = GameObject.Find("TrackingSpace");
+        CameraReplica = GameObject.Find("CameraRotReplica");
         outsideObject = managerObject.outsideCameraObject;
         movingSpeed = 1.0f;
         movingFlag = false;
@@ -28,54 +31,64 @@ public class MoveCamera : MonoBehaviour {
     }
 	
 	void Update () {
+        CameraReplica.transform.rotation = Camera.main.transform.rotation;
         if (Input.GetKey(KeyCode.Space) && movingCameraAvailable)
         {
             if (!movingCameraEase && outsideObject.Count != 0)
             {
                 List<GameObject> top = new List<GameObject>(outsideObject.Values);
-                mainCameraFrame.transform.LookAt(top[0].transform.position);
+                Vector3 targetPos = top[0].transform.position;
+                targetPos.y = 0;
+                float angle = Vector3.Angle(Camera.main.transform.forward, targetPos);
+                Vector3 cross  = Vector3.Cross(Camera.main.transform.forward, targetPos);
+                if (cross.y < 0) angle = -angle;
+
+                if (Mathf.Abs(angle) > 3.0f)
+                    mainCameraFrame.transform.localEulerAngles = new Vector3(0, mainCameraFrame.transform.localEulerAngles.y + Mathf.Floor(angle), 0);
                 return;
             }
 
             movingFlag = true;
+            quaternionFlag = false;
         }
     }
 
-    void LateUpdate()
+    void FixedUpdate()
     {
+        Debug.Log(Camera.main.transform.rotation);
+        Debug.Log(mainCameraFrame.transform.rotation);
+        //Camera.main.transform.localEulerAngles = new Vector3(0, 0, 90);
         if (outsideObject.Count != 0)
         {
             if (movingFlag)
             {
                 Transform faceObj = null;
+                Vector3 targetPos = Vector3.zero;
                 foreach (string key in outsideObject.Keys)
                 {
                     faceObj = outsideObject[key].transform;
-                    float angle = Vector3.Angle(Camera.main.transform.forward, faceObj.position);
+                    targetPos = faceObj.position;
+                    targetPos.y = 0;
+
+                    float angle = Vector3.Angle(Camera.main.transform.forward, targetPos);
+                    Vector3 cross = Vector3.Cross(Camera.main.transform.forward, targetPos);
+                    if (cross.y < 0)
+                        angle = -angle;
 
                     if (!quaternionFlag)
                     {
-                        //localQuaternion = Quaternion.LookRotation(faceObj.position - Camera.main.transform.forward);
-                        localQuaternion = Quaternion.Euler(
-                            Vector3.Angle(faceObj.right, Camera.main.transform.right),
-                            Vector3.Angle(faceObj.up, Camera.main.transform.up),
-                            Vector3.Angle(faceObj.forward, Camera.main.transform.forward)
-                            );
+                        localQuaternion = Quaternion.Euler(new Vector3(0, angle, 0));
                         quaternionFlag = true;
                     }
 
-                    //Quaternion.
-                    //mainCameraFrame.transform.eulerAngles = Vector3.Slerp(mainCameraFrame.transform.position, )
                     mainCameraFrame.transform.rotation = Quaternion.Slerp(
-                        mainCameraFrame.transform.rotation, localQuaternion, movingSpeed * Time.deltaTime);
-                    Debug.Log(localQuaternion);
-                    Debug.Log(Quaternion.LookRotation(faceObj.position - Camera.main.transform.position));
-                    //Debug.Log(Quaternion.Slerp(
-                    //    mainCameraFrame.transform.rotation, Quaternion.LookRotation(faceObj.position - mainCameraFrame.transform.position), movingSpeed * Time.deltaTime));
+                        mainCameraFrame.transform.rotation,
+                        localQuaternion,
+                        movingSpeed * Time.deltaTime);
                     break;
                 }
 
-                if (Vector3.Angle(faceObj.position - mainCameraFrame.transform.position, mainCameraFrame.transform.forward) < .1f)
+                if (Vector3.Angle(Camera.main.transform.forward, targetPos) < .1f)
                 {
                     quaternionFlag = false;
                     movingFlag = false;
@@ -83,4 +96,21 @@ public class MoveCamera : MonoBehaviour {
             }
         }
     }
+
+    System.Collections.IEnumerator SpinObject(float angle)
+    {
+        float duration = angle;
+        float elapsed = 0f;
+        float spinSpeed = 50f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            Debug.Log(string.Format("elapsed: {0}, duration: {1}", elapsed, duration));
+            mainCameraFrame.transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
+    }
+
 }
