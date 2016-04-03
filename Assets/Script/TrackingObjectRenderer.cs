@@ -23,12 +23,12 @@ public class TrackingObjectRenderer : MonoBehaviour {
 
         foreach (MarkerXMLWrapper obj in spawningObject)
         {
-            int current_frame = Time.frameCount;
+            int current_frame = Mathf.RoundToInt(Time.time * videoData.FPS);
             int frame_idx = 0;
             int prev_frame = int.MaxValue;
             foreach (MarkerWrapper b in obj.TrackList)
             {
-                if (prev_frame > (current_frame - b.FrameID))
+                if (prev_frame > (current_frame - b.FrameID) && (current_frame - b.FrameID) >= 0)
                 {
                     prev_frame = current_frame - b.FrameID;
                     frame_idx = obj.TrackList.IndexOf(b);

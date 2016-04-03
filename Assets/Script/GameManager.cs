@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour {
     }
 
     void Update () {
-        int curr_frame = Time.frameCount;
+        int curr_frame = Mathf.RoundToInt(Time.time * videoData.FPS);
 
         foreach(MarkerXMLWrapper data in objectData)
         {
