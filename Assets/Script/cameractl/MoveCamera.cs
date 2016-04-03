@@ -7,7 +7,6 @@ public class MoveCamera : MonoBehaviour {
     private GameManager managerObject;
 
     private GameObject mainCameraFrame;
-    private GameObject CameraReplica;
     private Quaternion localQuaternion;
     private Coroutine spinCoroutine;
     private float movingSpeed;
@@ -23,7 +22,6 @@ public class MoveCamera : MonoBehaviour {
         movingCameraAvailable = managerObject.moveCameraAvailable;
         movingCameraEase = managerObject.cameraEase;
         mainCameraFrame = GameObject.Find("TrackingSpace");
-        CameraReplica = GameObject.Find("CameraRotReplica");
         outsideObject = managerObject.outsideCameraObject;
         movingSpeed = 1.0f;
         movingFlag = false;
@@ -31,7 +29,6 @@ public class MoveCamera : MonoBehaviour {
     }
 	
 	void Update () {
-        CameraReplica.transform.rotation = Camera.main.transform.rotation;
         if (Input.GetKey(KeyCode.Space) && movingCameraAvailable)
         {
             if (!movingCameraEase && outsideObject.Count != 0)

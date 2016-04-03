@@ -157,9 +157,12 @@ public class ShowPreview : MonoBehaviour
 
     System.Collections.IEnumerator DelayPreview(GameObject previewObj)
     {
-        previewObj.GetComponent<Renderer>().enabled = true;
-        yield return new WaitForSeconds(previewDelayTime);
-        previewObj.GetComponent<Renderer>().enabled = false;
-        previewHideFlag = true;
+        if (previewObj != null)
+        {
+            previewObj.GetComponent<Renderer>().enabled = true;
+            yield return new WaitForSeconds(previewDelayTime);
+            previewObj.GetComponent<Renderer>().enabled = false;
+            previewHideFlag = true;
+        }
     }
 }
