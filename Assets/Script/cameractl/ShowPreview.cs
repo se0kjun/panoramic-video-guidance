@@ -72,6 +72,7 @@ public class ShowPreview : MonoBehaviour
                     GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
                     plane.transform.parent = previewPlane.transform;
 
+                    plane.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                     Material planeMat = plane.GetComponent<Renderer>().material;
                     planeMat.mainTexture = previewRtt;
                     Color planeColor = planeMat.color;
