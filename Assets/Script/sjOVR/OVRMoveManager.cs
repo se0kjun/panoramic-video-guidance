@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class OVRMoveManager : MonoBehaviour {
-    private OVRCameraRig OVRrig;
+    private GameObject trackingSpace;
+    private GameManager gameManager;
+    private List<MarkerXMLWrapper> spawningObject;
 
-	// Use this for initialization
-	void Start () {
-        OVRrig = GameObject.Find("GameManager").GetComponent<OVRCameraRig>();
+    void Start ()
+    {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        trackingSpace = GameObject.Find("TrackingSpace");
+        spawningObject = gameManager.GetSpawnObject();
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 	}
 }
